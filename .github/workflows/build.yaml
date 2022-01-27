@@ -1,0 +1,26 @@
+name: Compression
+
+on: push
+
+jobs:
+  compress:
+    if: "!contains(github.event.head_commit.message, 'skip-ci')"
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps:
+      -
+        name: Checkout repository
+        uses: actions/checkout@v2
+      -
+        name: Compressing new files
+        run: |
+          chmod +x compress.sh
+          ./compress.sh
+      -
+        name: Commit To Repo
+        uses: EndBug/add-and-commit@v7.0.0
+        with:
+          message: 'Push new compressed files'
+          signoff: true
+    
